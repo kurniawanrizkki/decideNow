@@ -45,7 +45,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Header Styles */
         .app-header {
             background: linear-gradient(120deg, var(--primary), #8a75f5);
             color: white;
@@ -118,7 +117,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Main Content */
         .app-main {
             max-width: 500px;
             margin: 1.5rem auto 0;
@@ -182,7 +180,6 @@
             line-height: 1.5;
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -240,6 +237,12 @@
             background: var(--primary-dark);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-secondary {
             background: var(--secondary);
             color: white;
@@ -293,7 +296,6 @@
             display: none !important;
         }
 
-        /* Decks Grid */
         .decks-container {
             margin-top: 1.5rem;
         }
@@ -326,7 +328,7 @@
             transition: var(--transition);
             cursor: pointer;
             position: relative;
-            height: 200px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
         }
@@ -344,6 +346,21 @@
             right: 0;
             height: 8px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .deck-card.locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .deck-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 2;
         }
 
         .deck-content {
@@ -368,8 +385,30 @@
             border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             width: fit-content;
+        }
+
+        .deck-deadline {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--danger);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .deck-deadline.low-urgency {
+            color: var(--success);
+        }
+
+        .deck-deadline.medium-urgency {
+            color: var(--warning);
+        }
+
+        .deck-deadline.high-urgency {
+            color: var(--danger);
         }
 
         .deck-stats {
@@ -380,7 +419,18 @@
             color: var(--text-light);
         }
 
-        /* IMPROVED SPINNER INTERFACE */
+        .credit-requirement {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
         .spinner-container {
             height: 80vh;
             max-height: 600px;
@@ -397,7 +447,6 @@
             border: 1px solid rgba(106, 90, 205, 0.15);
         }
 
-        /* Pointer/Arrow at top */
         .spinner-pointer {
             position: absolute;
             top: 2rem;
@@ -424,7 +473,6 @@
             border-radius: 20px 20px 0 0;
         }
 
-        /* Wheel wrapper for center positioning */
         .spinner-wheel-wrapper {
             position: relative;
             width: 350px;
@@ -451,7 +499,6 @@
             cursor: not-allowed;
         }
 
-        /* Center circle decoration */
         .spinner-center {
             position: absolute;
             top: 50%;
@@ -471,7 +518,6 @@
             color: white;
         }
 
-        /* Wheel segments */
         .wheel-segment {
             position: absolute;
             width: 50%;
@@ -493,21 +539,22 @@
             transform-origin: 50% 100%;
         }
 
-.segment-text {
-    position: absolute;
-    left: 55%;
-    top: 30%;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    white-space: nowrap;
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    pointer-events: none;
-    transform: translateX(-50%);
-}        /* Result overlay */
+        .segment-text {
+            position: absolute;
+            left: 55%;
+            top: 30%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+            max-width: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            pointer-events: none;
+            transform: translateX(-50%);
+        }
+
         .spinner-result {
             position: absolute;
             top: 0;
@@ -607,7 +654,6 @@
             box-shadow: 0 8px 25px rgba(106, 90, 205, 0.4);
         }
 
-        /* Rating Page */
         .result-display {
             text-align: center;
             margin: 2rem 0;
@@ -667,7 +713,6 @@
             color: var(--primary);
         }
 
-        /* Confetti */
         .confetti-container {
             position: fixed;
             top: 0;
@@ -686,7 +731,6 @@
             opacity: 0;
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 1.8rem;
         }
@@ -748,7 +792,6 @@
             background: #e03a5d;
         }
 
-        /* Empty state */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -761,7 +804,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -797,7 +839,91 @@
             border-color: #4dabf7;
         }
 
-        /* Responsive */
+        /* Proof Upload Section */
+        .proof-upload-section {
+            background: rgba(67, 217, 173, 0.1);
+            border: 2px dashed var(--success);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .proof-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 1rem 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .file-input-label:hover {
+            background: #39c49a;
+            transform: translateY(-2px);
+        }
+
+        /* Reminder Section */
+        .reminders-section {
+            background: rgba(255, 203, 40, 0.1);
+            border-left: 4px solid var(--warning);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .reminder-icon {
+            font-size: 1.5rem;
+            color: var(--warning);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
         @media (max-width: 500px) {
             .app-header {
                 padding: 1rem;
@@ -833,12 +959,13 @@
                 font-size: 1.4rem;
             }
             
-         .segment-text {
-        font-size: 0.7rem;
-        left: 50%;
-        top: 25%;
-        max-width: 70px;
-    }  
+            .segment-text {
+                font-size: 0.7rem;
+                left: 50%;
+                top: 25%;
+                max-width: 70px;
+            }
+            
             .decision-actions {
                 gap: 1.5rem;
             }
@@ -857,7 +984,6 @@
 </head>
 <body>
     <div id="app">
-        <!-- Header with stats -->
         <header class="app-header">
             <div class="header-content">
                 <div class="logo">
@@ -865,6 +991,13 @@
                     <span>DecideNow</span>
                 </div>
                 <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            <i class="fas fa-coins"></i>
+                            <span id="credit-count">5</span>
+                        </div>
+                        <div class="stat-label">Kredit</div>
+                    </div>
                     <div class="stat-item">
                         <div class="stat-value">
                             <i class="fas fa-fire streak-fire"></i>
@@ -890,15 +1023,21 @@
                     <h1 class="page-title">Halo, Pengambil Keputusan!</h1>
                     <p class="page-subtitle">Hentikan overthinking, mulai memutuskan dengan cepat dan percaya diri</p>
                     
+                    <!-- Reminders Section -->
+                    <div class="reminders-section" id="reminders-container" style="display: none;">
+                        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-bell"></i> Pengingat Hari Ini
+                        </h3>
+                        <div id="reminders-list"></div>
+                    </div>
+                    
                     <button id="new-deck-btn" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Buat Deck Baru
                     </button>
                     
                     <div class="decks-container">
                         <h2 class="section-title"><i class="fas fa-th-large"></i> Deck Anda</h2>
-                        <div id="decks-list" class="deck-grid">
-                            <!-- Decks will be loaded here -->
-                        </div>
+                        <div id="decks-list" class="deck-grid"></div>
                     </div>
                 </div>
             </section>
@@ -913,18 +1052,48 @@
                     
                     <div class="form-group">
                         <label for="deck-name"><i class="fas fa-tag"></i> Nama Deck</label>
-                        <input type="text" id="deck-name" class="form-control" placeholder="Contoh: Makan Siang, Tugas Hari Ini, Olahraga">
+                        <input type="text" id="deck-name" class="form-control" placeholder="Contoh: Tugas Kuliah, Proyek Kerja">
                     </div>
                     
                     <div class="form-group">
                         <label for="deck-type"><i class="fas fa-layer-group"></i> Kategori</label>
                         <select id="deck-type" class="form-control">
-                            <option value="Food">🍕 Makanan</option>
                             <option value="Task">✅ Tugas</option>
+                            <option value="Project">📊 Proyek</option>
+                            <option value="Food">🍕 Makanan</option>
                             <option value="Workout">💪 Olahraga</option>
                             <option value="Entertainment">🎬 Hiburan</option>
                             <option value="Other">✨ Lainnya</option>
                         </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deck-deadline"><i class="fas fa-calendar-alt"></i> Deadline (Opsional)</label>
+                        <input type="date" id="deck-deadline" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deck-project-size"><i class="fas fa-ruler"></i> Ukuran Proyek</label>
+                        <select id="deck-project-size" class="form-control">
+                            <option value="small">Kecil (1-2 hari)</option>
+                            <option value="medium" selected>Sedang (3-7 hari)</option>
+                            <option value="large">Besar (> 1 minggu)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deck-credit"><i class="fas fa-coins"></i> Kredit yang Diperlukan</label>
+                        <input type="number" id="deck-credit" class="form-control" value="1" min="0" max="10">
+                        <small style="color: var(--text-light); margin-top: 0.5rem; display: block;">
+                            Atur kredit 0 untuk deck yang bisa diakses tanpa kredit
+                        </small>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="deck-requires-proof">
+                        <label for="deck-requires-proof" style="margin: 0; font-size: 1rem;">
+                            Memerlukan bukti penyelesaian untuk mendapatkan kredit
+                        </label>
                     </div>
                     
                     <div class="form-group">
@@ -946,26 +1115,19 @@
                 </div>
             </section>
 
-            <!-- Navigator (Priority Spinner Mode) -->
+            <!-- Navigator -->
             <section id="navigator" class="page">
                 <div class="page-content">
                     <h1 id="deck-title" class="page-title">Pilih Opsi Terbaik</h1>
                     
                     <div class="spinner-container">
-                        <!-- Pointer at top -->
                         <div class="spinner-pointer"></div>
-                        
-                        <!-- Spinner wheel -->
                         <div class="spinner-wheel-wrapper">
-                            <div class="spinner-wheel" id="spinner-wheel">
-                                <!-- Segments will be generated here -->
-                            </div>
+                            <div class="spinner-wheel" id="spinner-wheel"></div>
                             <div class="spinner-center">
                                 <i class="fas fa-bolt"></i>
                             </div>
                         </div>
-                        
-                        <!-- Result overlay -->
                         <div class="spinner-result" id="spinner-result">
                             <div class="result-icon">🎉</div>
                             <div class="result-text-large" id="result-text-large"></div>
@@ -988,6 +1150,49 @@
                 </div>
             </section>
 
+            <!-- Completion & Proof Upload -->
+            <section id="completion" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Upload Bukti Penyelesaian</h1>
+                    <p class="page-subtitle">Upload bukti untuk mendapatkan kredit tambahan!</p>
+                    
+                    <div class="result-display">
+                        <p>Anda memutuskan untuk:</p>
+                        <div class="result-text" id="completion-result">-</div>
+                    </div>
+                    
+                    <div class="proof-upload-section">
+                        <i class="fas fa-camera" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                        <h3>Upload Bukti (Foto/Screenshot)</h3>
+                        <p style="color: var(--text-light); margin: 0.5rem 0;">
+                            Upload foto atau screenshot sebagai bukti penyelesaian
+                        </p>
+                        
+                        <div class="file-input-wrapper" style="margin: 1rem 0;">
+                            <input type="file" id="proof-file" accept="image/*" capture="environment">
+                            <label for="proof-file" class="file-input-label">
+                                <i class="fas fa-upload"></i> Pilih File
+                            </label>
+                        </div>
+                        
+                        <div id="proof-preview-container" style="display: none;">
+                            <img id="proof-preview" class="proof-preview" alt="Preview">
+                            <p style="color: var(--success); font-weight: 600; margin-top: 0.5rem;">
+                                <i class="fas fa-check-circle"></i> Bukti siap diupload
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <button id="submit-proof-btn" class="btn btn-primary" disabled>
+                        <i class="fas fa-check"></i> Submit Bukti & Dapatkan Kredit
+                    </button>
+                    
+                    <button id="skip-proof-btn" class="btn btn-light">
+                        <i class="fas fa-times"></i> Lewati (Tidak dapat kredit)
+                    </button>
+                </div>
+            </section>
+
             <!-- Rating Page -->
             <section id="rating" class="page">
                 <div class="page-content">
@@ -995,7 +1200,7 @@
                     
                     <div class="result-display">
                         <p>Anda memutuskan untuk:</p>
-                        <div class="result-text" id="selected-result">Makan Sushi</div>
+                        <div class="result-text" id="selected-result">-</div>
                     </div>
                     
                     <div class="rating-container">
@@ -1021,19 +1226,15 @@
         </main>
 
         <div class="confetti-container" id="confetti-container"></div>
-        
-        <!-- Toast container -->
         <div id="toast-container"></div>
     </div>
 
     <script>
-        // ======================
-        // GLOBAL VARIABLES
-        // ======================
         let currentUser = JSON.parse(localStorage.getItem('DecideNowUser')) || { 
             userId: Date.now().toString(), 
             xp: 0, 
-            streak: 0, 
+            streak: 0,
+            credits: 5,
             badges: [],
             lastActive: null
         };
@@ -1045,17 +1246,14 @@
         let selectedRating = 0;
         let deckToRate = null;
         let spinnerSegments = [];
+        let uploadedProof = null;
         
-        // Color palette for segments
         const segmentColors = [
             '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
             '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788',
             '#FF8FAB', '#6C5CE7', '#00B894', '#FDCB6E', '#E17055'
         ];
         
-        // ======================
-        // INITIALIZATION
-        // ======================
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
@@ -1065,6 +1263,7 @@
             updateStats();
             loadDashboard();
             setupEventListeners();
+            checkReminders();
         }
         
         function checkDailyStreak() {
@@ -1080,7 +1279,6 @@
                     
                     if (diffDays > 1) {
                         currentUser.streak = 0;
-                        showFeedback('Streak Anda berakhir karena tidak aktif kemarin', 'info');
                     }
                 }
                 
@@ -1091,8 +1289,50 @@
         }
         
         function updateStats() {
-            document.getElementById('xp-count').textContent = currentUser.xp;
-            document.getElementById('streak-count').textContent = currentUser.streak;
+            document.getElementById('xp-count').textContent = currentUser.xp || 0;
+            document.getElementById('streak-count').textContent = currentUser.streak || 0;
+            document.getElementById('credit-count').textContent = currentUser.credits || 0;
+        }
+        
+        function checkReminders() {
+            const decks = getDecks();
+            const today = new Date();
+            const reminders = [];
+            
+            decks.forEach(deck => {
+                if (deck.deadline) {
+                    const deadline = new Date(deck.deadline);
+                    const daysUntil = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntil >= 0 && daysUntil <= 3) {
+                        reminders.push({
+                            deckName: deck.name,
+                            daysUntil: daysUntil,
+                            urgency: daysUntil === 0 ? 'Hari ini!' : daysUntil === 1 ? 'Besok' : `${daysUntil} hari lagi`
+                        });
+                    }
+                }
+            });
+            
+            const reminderContainer = document.getElementById('reminders-container');
+            const remindersList = document.getElementById('reminders-list');
+            
+            if (reminders.length > 0) {
+                reminderContainer.style.display = 'block';
+                remindersList.innerHTML = reminders.map(r => `
+                    <div class="reminder-item">
+                        <i class="fas fa-bell reminder-icon"></i>
+                        <div style="flex: 1;">
+                            <strong>${r.deckName}</strong>
+                            <div style="font-size: 0.9rem; color: var(--text-light);">
+                                Deadline: ${r.urgency}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                reminderContainer.style.display = 'none';
+            }
         }
         
         function setupEventListeners() {
@@ -1108,8 +1348,11 @@
             document.getElementById('finish-navigator-btn').addEventListener('click', finishNavigator);
             document.getElementById('submit-rating-btn').addEventListener('click', submitRating);
             document.getElementById('skip-rating-btn').addEventListener('click', skipRating);
+            document.getElementById('submit-proof-btn').addEventListener('click', submitProof);
+            document.getElementById('skip-proof-btn').addEventListener('click', skipProof);
             
-            // Star rating
+            document.getElementById('proof-file').addEventListener('change', handleProofUpload);
+            
             document.querySelectorAll('.star').forEach(star => {
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.dataset.value);
@@ -1146,9 +1389,6 @@
             });
         }
         
-        // ======================
-        // PAGE NAVIGATION
-        // ======================
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
@@ -1158,6 +1398,7 @@
         
         function loadDashboard() {
             showPage('dashboard');
+            checkReminders();
             
             const decksList = document.getElementById('decks-list');
             const decks = getDecks();
@@ -1178,29 +1419,105 @@
                 return;
             }
             
+            const sortedDecks = sortDecksByUrgency(decks);
             decksList.innerHTML = '';
             
-            decks.forEach(deck => {
+            sortedDecks.forEach(deck => {
                 const card = document.createElement('div');
-                card.className = 'deck-card';
+                const isLocked = (deck.creditRequired || 0) > (currentUser.credits || 0);
+                const urgencyInfo = getUrgencyInfo(deck);
+                
+                card.className = 'deck-card' + (isLocked ? ' locked' : '');
                 card.innerHTML = `
                     <div class="deck-content">
                         <div class="deck-type">${getDeckTypeLabel(deck.type)}</div>
                         <h3 class="deck-title">${deck.name}</h3>
+                        ${deck.deadline ? `
+                            <div class="deck-deadline ${urgencyInfo.class}">
+                                <i class="fas fa-clock"></i>
+                                ${urgencyInfo.text}
+                            </div>
+                        ` : ''}
                         <div class="deck-stats">
                             <span><i class="fas fa-list"></i> ${deck.options.length} opsi</span>
                             <span><i class="fas fa-history"></i> ${getDeckUsageCount(deck.deckId)}</span>
                         </div>
+                        ${(deck.creditRequired || 0) > 0 ? `
+                            <div class="credit-requirement">
+                                <i class="fas fa-coins"></i> ${deck.creditRequired} Kredit
+                            </div>
+                        ` : ''}
                     </div>
                 `;
-                card.onclick = () => startNavigator(deck);
+                
+                if (!isLocked) {
+                    card.onclick = () => startNavigator(deck);
+                } else {
+                    card.onclick = () => showFeedback(`Anda memerlukan ${deck.creditRequired} kredit untuk membuka deck ini. Kredit Anda: ${currentUser.credits}`, 'error');
+                }
+                
                 decksList.appendChild(card);
             });
+        }
+        
+        function sortDecksByUrgency(decks) {
+            return decks.sort((a, b) => {
+                const urgencyA = calculateUrgencyScore(a);
+                const urgencyB = calculateUrgencyScore(b);
+                return urgencyB - urgencyA;
+            });
+        }
+        
+        function calculateUrgencyScore(deck) {
+            let score = 0;
+            
+            if (deck.deadline) {
+                const today = new Date();
+                const deadline = new Date(deck.deadline);
+                const daysUntil = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                
+                if (daysUntil < 0) score += 100;
+                else if (daysUntil === 0) score += 90;
+                else if (daysUntil === 1) score += 80;
+                else if (daysUntil <= 3) score += 70;
+                else if (daysUntil <= 7) score += 50;
+            }
+            
+            if (deck.projectSize === 'large') score += 30;
+            else if (deck.projectSize === 'medium') score += 20;
+            else if (deck.projectSize === 'small') score += 10;
+            
+            return score;
+        }
+        
+        function getUrgencyInfo(deck) {
+            if (!deck.deadline) return { text: '', class: '' };
+            
+            const today = new Date();
+            const deadline = new Date(deck.deadline);
+            const daysUntil = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntil < 0) {
+                return { text: `Terlambat ${Math.abs(daysUntil)} hari!`, class: 'high-urgency' };
+            } else if (daysUntil === 0) {
+                return { text: 'Deadline Hari Ini!', class: 'high-urgency' };
+            } else if (daysUntil === 1) {
+                return { text: 'Deadline Besok', class: 'high-urgency' };
+            } else if (daysUntil <= 3) {
+                return { text: `${daysUntil} hari lagi`, class: 'medium-urgency' };
+            } else if (daysUntil <= 7) {
+                return { text: `${daysUntil} hari lagi`, class: 'low-urgency' };
+            } else {
+                return { text: `${daysUntil} hari lagi`, class: 'low-urgency' };
+            }
         }
         
         function showCreateDeckPage() {
             showPage('create-deck');
             document.getElementById('deck-name').value = '';
+            document.getElementById('deck-deadline').value = '';
+            document.getElementById('deck-credit').value = '1';
+            document.getElementById('deck-requires-proof').checked = false;
             document.getElementById('options-container').innerHTML = `
                 <div class="option-item">
                     <input type="text" class="option-input form-control" placeholder="Opsi 1">
@@ -1209,9 +1526,6 @@
             `;
         }
         
-        // ======================
-        // DECK MANAGEMENT
-        // ======================
         function getDecks() {
             return JSON.parse(localStorage.getItem('DecideNowDecks')) || [];
         }
@@ -1220,6 +1534,7 @@
             const labels = {
                 'Food': '🍕 Makanan',
                 'Task': '✅ Tugas',
+                'Project': '📊 Proyek',
                 'Workout': '💪 Olahraga',
                 'Entertainment': '🎬 Hiburan',
                 'Other': '✨ Lainnya'
@@ -1246,6 +1561,10 @@
         function saveDeck() {
             const name = document.getElementById('deck-name').value.trim();
             const type = document.getElementById('deck-type').value;
+            const deadline = document.getElementById('deck-deadline').value;
+            const projectSize = document.getElementById('deck-project-size').value;
+            const creditRequired = parseInt(document.getElementById('deck-credit').value) || 0;
+            const requiresProof = document.getElementById('deck-requires-proof').checked;
             const options = Array.from(document.querySelectorAll('.option-input'))
                 .map(input => input.value.trim())
                 .filter(val => val);
@@ -1271,6 +1590,10 @@
                 deckId: Date.now().toString(),
                 name,
                 type,
+                deadline: deadline || null,
+                projectSize,
+                creditRequired,
+                requiresProof,
                 options: uniqueOptions.map((opt, i) => ({
                     optionId: `opt-${Date.now()}-${i}`,
                     text: opt,
@@ -1290,10 +1613,15 @@
             }, 500);
         }
         
-        // ======================
-        // IMPROVED SPINNER NAVIGATION
-        // ======================
         function startNavigator(deck) {
+            const creditRequired = deck.creditRequired || 0;
+            const userCredits = currentUser.credits || 0;
+            
+            if (creditRequired > userCredits) {
+                showFeedback(`Anda memerlukan ${creditRequired} kredit untuk menggunakan deck ini. Kredit Anda: ${userCredits}`, 'error');
+                return;
+            }
+            
             currentDeck = deck;
             deckToRate = deck;
             showPage('navigator');
@@ -1313,96 +1641,73 @@
             spinnerSegments = [];
         }
         
-    function generateSpinnerWheel(options) {
-    const wheel = document.getElementById('spinner-wheel');
-    wheel.innerHTML = '';
-    wheel.style.transform = 'rotate(0deg)';
-    
-    if (options.length === 0) {
-        wheel.innerHTML = `
-            <div style="text-align: center; padding: 2rem; color: var(--text-light);">
-                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                <p>Deck ini tidak memiliki opsi.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    const totalOptions = options.length;
-    const segmentAngle = 360 / totalOptions;
-    
-    spinnerSegments = [];
-    
-    options.forEach((option, index) => {
-        const segment = document.createElement('div');
-        segment.className = 'wheel-segment';
+        function generateSpinnerWheel(options) {
+            const wheel = document.getElementById('spinner-wheel');
+            wheel.innerHTML = '';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            if (options.length === 0) {
+                wheel.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>Deck ini tidak memiliki opsi.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const totalOptions = options.length;
+            const segmentAngle = 360 / totalOptions;
+            
+            spinnerSegments = [];
+            
+            options.forEach((option, index) => {
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                
+                const rotation = index * segmentAngle;
+                const color = segmentColors[index % segmentColors.length];
+                
+                segment.style.transform = `rotate(${rotation}deg) skewY(${-90 + segmentAngle}deg)`;
+                segment.style.background = color;
+                
+                wheel.appendChild(segment);
+                
+                spinnerSegments.push({
+                    ...option,
+                    startAngle: rotation,
+                    endAngle: rotation + segmentAngle,
+                    color: color
+                });
+            });
+        }
         
-        const rotation = index * segmentAngle;
-        const color = segmentColors[index % segmentColors.length];
-        
-        segment.style.transform = `rotate(${rotation}deg) skewY(${-90 + segmentAngle}deg)`;
-        segment.style.background = color;
-        
-        // BUAT TEXT LANGSUNG DI SEGMENT (TANPA WRAPPER)
-        const text = document.createElement('span');
-        text.style.position = 'absolute';
-        text.style.left = '70%';
-        text.style.top = '40%';
-        text.style.transform = `skewY(${90 - segmentAngle}deg) rotate(${segmentAngle / 2}deg)`;
-        text.style.fontSize = '0.85rem';
-        text.style.fontWeight = '700';
-        text.style.color = 'white';
-        text.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.6)';
-        text.style.whiteSpace = 'nowrap';
-        text.style.pointerEvents = 'none';
-        
-        const displayText = option.text.length > 12 ? option.text.substring(0, 10) + '...' : option.text;
-        // text.textContent = displayText;
-        
-        segment.appendChild(text);
-        wheel.appendChild(segment);
-        
-        spinnerSegments.push({
-            ...option,
-            startAngle: rotation,
-            endAngle: rotation + segmentAngle,
-            color: color
-        });
-    });
-}        
         function spinWheel() {
-    if (isSpinning) return;
-    
-    isSpinning = true;
-    document.getElementById('spin-btn').disabled = true;
-    
-    const wheel = document.getElementById('spinner-wheel');
-    wheel.classList.add('spinning');
-    
-    // RANDOM SELECTION
-    const selectedIndex = Math.floor(Math.random() * spinnerSegments.length);
-    const selectedSegment = spinnerSegments[selectedIndex];
-    
-    // HITUNG ROTASI YANG BENAR
-    // Panah ada di atas (0 derajat), jadi kita perlu rotate wheel agar segment yang dipilih ada di atas
-    const segmentMiddleAngle = selectedSegment.startAngle + ((selectedSegment.endAngle - selectedSegment.startAngle) / 2);
-    
-    // Rotasi penuh (5 putaran) + offset agar segment terpilih berada di posisi panah (atas/0 derajat)
-    const baseRotation = 360 * 5; // 5 putaran penuh
-    const targetRotation = baseRotation + (360 - segmentMiddleAngle) + (Math.random() * 20 - 10); // tambah random ±10 derajat untuk variasi
-    
-    // Apply rotation
-    wheel.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-    wheel.style.transform = `rotate(${targetRotation}deg)`;
-    
-    // Show result after spin
-    setTimeout(() => {
-        currentResult = selectedSegment;
-        showResult(selectedSegment.text);
-        isSpinning = false;
-        wheel.classList.remove('spinning');
-    }, 5000);
-}
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            document.getElementById('spin-btn').disabled = true;
+            
+            const wheel = document.getElementById('spinner-wheel');
+            wheel.classList.add('spinning');
+            
+            const selectedIndex = Math.floor(Math.random() * spinnerSegments.length);
+            const selectedSegment = spinnerSegments[selectedIndex];
+            
+            const segmentMiddleAngle = selectedSegment.startAngle + ((selectedSegment.endAngle - selectedSegment.startAngle) / 2);
+            const baseRotation = 360 * 5;
+            const targetRotation = baseRotation + (360 - segmentMiddleAngle) + (Math.random() * 20 - 10);
+            
+            wheel.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+            wheel.style.transform = `rotate(${targetRotation}deg)`;
+            
+            setTimeout(() => {
+                currentResult = selectedSegment;
+                showResult(selectedSegment.text);
+                isSpinning = false;
+                wheel.classList.remove('spinning');
+            }, 5000);
+        }
         
         function showResult(resultText) {
             const resultElement = document.getElementById('spinner-result');
@@ -1412,8 +1717,6 @@
             resultElement.classList.add('show');
             
             document.getElementById('finish-navigator-btn').classList.remove('hidden');
-            
-            // Celebratory sound effect (visual feedback)
             showMiniConfetti();
         }
         
@@ -1456,6 +1759,14 @@
                 return;
             }
             
+            const creditRequired = currentDeck.creditRequired || 0;
+            if (creditRequired > 0) {
+                currentUser.credits = (currentUser.credits || 0) - creditRequired;
+                localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
+                updateStats();
+                showFeedback(`${creditRequired} kredit telah digunakan`, 'info');
+            }
+            
             const history = getHistory();
             const today = new Date().toISOString().split('T')[0];
             
@@ -1466,7 +1777,8 @@
                 deckName: currentDeck.name,
                 date: today,
                 result: currentResult.text,
-                rating: null
+                rating: null,
+                proofUploaded: false
             };
             
             history.push(newHistory);
@@ -1475,9 +1787,79 @@
             updateStreak();
             addXP(10);
             
+            if (currentDeck.requiresProof) {
+                showPage('completion');
+                document.getElementById('completion-result').textContent = currentResult.text;
+            } else {
+                showPage('rating');
+                document.getElementById('selected-result').textContent = currentResult.text;
+            }
+            
+            document.getElementById('finish-navigator-btn').classList.add('hidden');
+        }
+        
+        function handleProofUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showFeedback('Hanya file gambar yang diperbolehkan', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedProof = e.target.result;
+                document.getElementById('proof-preview').src = e.target.result;
+                document.getElementById('proof-preview-container').style.display = 'block';
+                document.getElementById('submit-proof-btn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function submitProof() {
+            if (!uploadedProof) {
+                showFeedback('Silakan upload bukti terlebih dahulu', 'error');
+                return;
+            }
+            
+            const history = getHistory();
+            const lastHistory = history.find(h => h.historyId === currentHistoryId);
+            if (lastHistory) {
+                lastHistory.proofUploaded = true;
+                lastHistory.proofData = uploadedProof;
+                localStorage.setItem('DecideNowHistory', JSON.stringify(history));
+            }
+            
+            const creditReward = 2;
+            currentUser.credits = (currentUser.credits || 0) + creditReward;
+            localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
+            updateStats();
+            
+            showConfetti();
+            showFeedback(`Luar biasa! Anda mendapat ${creditReward} kredit bonus!`, 'success');
+            
+            setTimeout(() => {
+                uploadedProof = null;
+                document.getElementById('proof-preview-container').style.display = 'none';
+                document.getElementById('submit-proof-btn').disabled = true;
+                document.getElementById('proof-file').value = '';
+                
+                showPage('rating');
+                document.getElementById('selected-result').textContent = currentResult.text;
+            }, 2000);
+        }
+        
+        function skipProof() {
+            showFeedback('Anda tidak mendapatkan kredit bonus', 'info');
+            
+            uploadedProof = null;
+            document.getElementById('proof-preview-container').style.display = 'none';
+            document.getElementById('submit-proof-btn').disabled = true;
+            document.getElementById('proof-file').value = '';
+            
             showPage('rating');
             document.getElementById('selected-result').textContent = currentResult.text;
-            document.getElementById('finish-navigator-btn').classList.add('hidden');
         }
         
         function getHistory() {
@@ -1503,9 +1885,6 @@
             updateStats();
         }
         
-        // ======================
-        // RATING SYSTEM
-        // ======================
         function updateStarRating() {
             document.querySelectorAll('.star').forEach(star => {
                 const value = parseInt(star.dataset.value);
@@ -1578,11 +1957,9 @@
             isSpinning = false;
             selectedRating = 0;
             deckToRate = null;
+            uploadedProof = null;
         }
         
-        // ======================
-        // UI FEEDBACK & EFFECTS
-        // ======================
         function showFeedback(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = `toast toast-${type} show`;
@@ -1650,31 +2027,51 @@
             }, 5000);
         }
         
-        // ======================
-        // DEMO DATA
-        // ======================
         function initializeDemoData() {
             const demoDecks = [
+                {
+                    deckId: 'task-1',
+                    name: 'Tugas Kuliah Minggu Ini',
+                    type: 'Task',
+                    deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    projectSize: 'medium',
+                    creditRequired: 1,
+                    requiresProof: true,
+                    options: [
+                        { optionId: 'opt-1', text: 'Kerjakan Essay Bahasa', impactScore: 5, effortScore: 4 },
+                        { optionId: 'opt-2', text: 'Selesaikan Lab Report', impactScore: 5, effortScore: 5 },
+                        { optionId: 'opt-3', text: 'Baca Paper untuk Diskusi', impactScore: 4, effortScore: 3 },
+                        { optionId: 'opt-4', text: 'Review Materi Ujian', impactScore: 4, effortScore: 3 }
+                    ]
+                },
                 {
                     deckId: 'food-1',
                     name: 'Makan Siang',
                     type: 'Food',
+                    deadline: null,
+                    projectSize: 'small',
+                    creditRequired: 0,
+                    requiresProof: false,
                     options: [
-                        { optionId: 'opt-1', text: 'Sushi', impactScore: 4, effortScore: 3 },
-                        { optionId: 'opt-2', text: 'Nasi Goreng', impactScore: 5, effortScore: 2 },
-                        { optionId: 'opt-3', text: 'Ayam Bakar', impactScore: 4, effortScore: 3 },
-                        { optionId: 'opt-4', text: 'Bakso', impactScore: 3, effortScore: 2 }
+                        { optionId: 'opt-5', text: 'Sushi', impactScore: 4, effortScore: 3 },
+                        { optionId: 'opt-6', text: 'Nasi Goreng', impactScore: 5, effortScore: 2 },
+                        { optionId: 'opt-7', text: 'Ayam Bakar', impactScore: 4, effortScore: 3 },
+                        { optionId: 'opt-8', text: 'Bakso', impactScore: 3, effortScore: 2 }
                     ]
                 },
                 {
-                    deckId: 'workout-1',
-                    name: 'Olahraga Sore',
-                    type: 'Workout',
+                    deckId: 'project-1',
+                    name: 'Proyek Besar: Skripsi',
+                    type: 'Project',
+                    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    projectSize: 'large',
+                    creditRequired: 3,
+                    requiresProof: true,
                     options: [
-                        { optionId: 'opt-5', text: 'Lari 5km', impactScore: 5, effortScore: 4 },
-                        { optionId: 'opt-6', text: 'Yoga 30 menit', impactScore: 4, effortScore: 2 },
-                        { optionId: 'opt-7', text: 'Angkat Beban', impactScore: 5, effortScore: 5 },
-                        { optionId: 'opt-8', text: 'Jalan Kaki', impactScore: 3, effortScore: 1 }
+                        { optionId: 'opt-9', text: 'Riset Literatur', impactScore: 5, effortScore: 5 },
+                        { optionId: 'opt-10', text: 'Coding Prototype', impactScore: 5, effortScore: 5 },
+                        { optionId: 'opt-11', text: 'Konsultasi Dosen', impactScore: 4, effortScore: 2 },
+                        { optionId: 'opt-12', text: 'Menulis Bab 1', impactScore: 5, effortScore: 4 }
                     ]
                 }
             ];
@@ -1683,7 +2080,6 @@
             showFeedback('Deck contoh telah dibuat untuk Anda!', 'info');
         }
         
-        // Initialize demo data if no decks exist
         if (!localStorage.getItem('DecideNowDecks')) {
             initializeDemoData();
         }
