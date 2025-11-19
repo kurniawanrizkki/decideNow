@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6a5acd">
+    <title>DecideNow - Bebas dari Decision Fatigue</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a5acd;
+            --primary-dark: #5a4fcf;
+            --secondary: #ff6b6b;
+            --success: #43d9ad;
+            --warning: #f9cb28;
+            --danger: #ff4d6d;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            --card-bg: #ffffff;
+            --text: #333;
+            --text-light: #6c757d;
+            --border: #e9ecef;
+            --shadow: 0 8px 20px rgba(106, 90, 205, 0.15);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --border-radius: 24px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --spinner-threshold: 150px;
+            --spinner-rotation: 25deg;
+            --like-color: rgba(67, 217, 173, 0.2);
+            --dislike-color: rgba(255, 77, 109, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 2rem;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background: linear-gradient(120deg, var(--primary), #8a75f5);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .streak-fire {
+            color: #ff9e3d;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Main Content */
+        .app-main {
+            max-width: 500px;
+            margin: 1.5rem auto 0;
+            padding: 0 1.2rem;
+        }
+
+        .page {
+            display: none;
+            min-height: calc(100vh - 6rem);
+            position: relative;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 6px 6px 0 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            width: auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            font-size: 1.15rem;
+            padding: 1.1rem;
+            margin: 0.8rem 0;
+            box-shadow: 0 6px 15px rgba(106, 90, 205, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .btn-secondary:hover {
+            background: #ff5252;
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-light:hover {
+            background: rgba(106, 90, 205, 0.05);
+        }
+
+        .btn-back {
+            position: fixed;
+            top: 5rem;
+            left: 1.2rem;
+            background: var(--primary);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Decks Grid */
+        .decks-container {
+            margin-top: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .deck-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .deck-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .deck-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .deck-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .deck-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+        }
+
+        .deck-type {
+            display: inline-block;
+            background: rgba(106, 90, 205, 0.1);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .deck-stats {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* Spinner Interface */
+        .spinner-container {
+            height: 80vh;
+            max-height: 700px;
+            position: relative;
+            margin: 1.5rem 0 3rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+            background: linear-gradient(145deg, #f8f9ff, #eef1ff);
+            border: 1px solid rgba(106, 90, 205, 0.15);
+        }
+
+        .spinner-wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--primary);
+            background: white;
+            overflow: hidden;
+        }
+
+        .segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .segment:hover {
+            transform: scale(1.05) rotate(5deg);
+            z-index: 10;
+        }
+
+        .segment-text {
+            position: absolute;
+            left: 10%;
+            top: 40%;
+            transform: rotate(45deg);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            color: var(--text);
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .spinner-result {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .spinner-result.show {
+            opacity: 1;
+        }
+
+        .decision-actions {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+            z-index: 20;
+        }
+
+        .action-btn {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-spin {
+            background: var(--primary);
+            color: white;
+            border: 3px solid var(--primary);
+        }
+
+        .btn-like {
+            background: white;
+            color: var(--success);
+            border: 3px solid var(--success);
+        }
+
+        .timer-container {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 15;
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--primary);
+        }
+
+        .timer-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip-path: inset(0 0 50% 0);
+            background: var(--primary);
+            transform-origin: center;
+            transition: transform 0.1s linear;
+            z-index: -1;
+        }
+
+        /* Rating Page */
+        .result-display {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(106, 90, 205, 0.08);
+            border-radius: 20px;
+            border: 1px solid rgba(106, 90, 205, 0.2);
+        }
+
+        .result-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            color: var(--primary);
+            min-height: 3rem;
+        }
+
+        .rating-container {
+            text-align: center;
+            margin: 2.5rem 0;
+        }
+
+        .rating-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .stars {
+            font-size: 3.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .star {
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--warning);
+            transform: scale(1.15);
+            text-shadow: 0 0 10px rgba(249, 203, 40, 0.7);
+        }
+
+        .rating-feedback {
+            min-height: 2rem;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 18px;
+            background: #f00;
+            opacity: 0;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+        }
+
+        .options-container {
+            margin-bottom: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .option-item {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-remove-option {
+            background: var(--danger);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .btn-remove-option:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: #e03a5d;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(106, 90, 205, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            border: 2px solid var(--primary);
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-success {
+            border-color: var(--success);
+        }
+
+        .toast-error {
+            border-color: var(--danger);
+        }
+
+        .toast-info {
+            border-color: #4dabf7;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .app-header {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            
+            .user-stats {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-content {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 1.7rem;
+            }
+            
+            .spinner-wheel {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .decision-actions {
+                gap: 1.5rem;
+            }
+            
+            .action-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            
+            .stars {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header with stats -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-brain logo-icon"></i>
+                    <span>DecideNow</span>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            <i class="fas fa-fire streak-fire"></i>
+                            <span id="streak-count">0</span>
+                        </div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            <i class="fas fa-star"></i>
+                            <span id="xp-count">0</span>
+                        </div>
+                        <div class="stat-label">XP</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- Dashboard -->
+            <section id="dashboard" class="page active">
+                <div class="page-content">
+                    <h1 class="page-title">Halo, Pengambil Keputusan!</h1>
+                    <p class="page-subtitle">Hentikan overthinking, mulai memutuskan dengan cepat dan percaya diri</p>
+                    
+                    <button id="new-deck-btn" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Buat Deck Baru
+                    </button>
+                    
+                    <div class="decks-container">
+                        <h2 class="section-title"><i class="fas fa-th-large"></i> Deck Anda</h2>
+                        <div id="decks-list" class="deck-grid">
+                            <!-- Decks will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Create Deck -->
+            <section id="create-deck" class="page">
+                <button id="back-to-dashboard-btn" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="page-content">
+                    <h1 class="page-title">Buat Deck Baru</h1>
+                    
+                    <div class="form-group">
+                        <label for="deck-name"><i class="fas fa-tag"></i> Nama Deck</label>
+                        <input type="text" id="deck-name" class="form-control" placeholder="Contoh: Makan Siang, Tugas Hari Ini, Olahraga">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deck-type"><i class="fas fa-layer-group"></i> Kategori</label>
+                        <select id="deck-type" class="form-control">
+                            <option value="Food">🍕 Makanan</option>
+                            <option value="Task">✅ Tugas</option>
+                            <option value="Workout">💪 Olahraga</option>
+                            <option value="Entertainment">🎬 Hiburan</option>
+                            <option value="Other">✨ Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-list"></i> Opsi</label>
+                        <div id="options-container" class="options-container">
+                            <div class="option-item">
+                                <input type="text" class="option-input form-control" placeholder="Opsi 1">
+                                <button class="btn btn-remove-option"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <button id="add-option-btn" class="btn btn-light">
+                            <i class="fas fa-plus"></i> Tambah Opsi
+                        </button>
+                    </div>
+                    
+                    <button id="save-deck-btn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan Deck
+                    </button>
+                </div>
+            </section>
+
+            <!-- Navigator (Priority Spinner Mode) -->
+            <section id="navigator" class="page">
+                <div class="page-content">
+                    <h1 id="deck-title" class="page-title">Pilih Opsi Terbaik</h1>
+                    
+                    <div class="spinner-container">
+                        <div class="spinner-wheel" id="spinner-wheel">
+                            <!-- Segments will be generated here -->
+                        </div>
+                        <div class="spinner-result" id="spinner-result">
+                            <!-- Result will be displayed here -->
+                        </div>
+                    </div>
+                    
+                    <div class="decision-actions">
+                        <button id="spin-btn" class="action-btn btn-spin">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="finish-navigator-btn" class="btn btn-secondary hidden">
+                            <i class="fas fa-trophy"></i> Selesai & Simpan Keputusan
+                        </button>
+                    </div>
+                    
+                    <button id="back-to-decks-btn" class="btn btn-light" style="margin-top: 1rem">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Deck
+                    </button>
+                </div>
+            </section>
+
+            <!-- Rating Page -->
+            <section id="rating" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Bagaimana Hasilnya?</h1>
+                    
+                    <div class="result-display">
+                        <p>Anda memutuskan untuk:</p>
+                        <div class="result-text" id="selected-result">Makan Sushi</div>
+                    </div>
+                    
+                    <div class="rating-container">
+                        <h2 class="rating-title">Beri rating pengalaman Anda</h2>
+                        <div class="stars" id="stars">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <div class="rating-feedback" id="rating-feedback">Ketuk bintang untuk memberi rating</div>
+                    </div>
+                    
+                    <button id="submit-rating-btn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Kirim Rating
+                    </button>
+                    <button id="skip-rating-btn" class="btn btn-light">
+                        <i class="fas fa-arrow-right"></i> Lewati
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <div class="confetti-container" id="confetti-container"></div>
+        
+        <!-- Toast container -->
+        <div id="toast-container"></div>
+    </div>
+
+    <script>
+        // ======================
+        // GLOBAL VARIABLES
+        // ======================
+        let currentUser = JSON.parse(localStorage.getItem('DecideNowUser')) || { 
+            userId: Date.now().toString(), 
+            xp: 0, 
+            streak: 0, 
+            badges: [],
+            lastActive: null
+        };
+        
+        let currentDeck = null;
+        let currentResult = null;
+        let currentHistoryId = null;
+        let isSpinning = false;
+        let selectedRating = 0;
+        let deckToRate = null;
+        let spinnerSegments = [];
+        let currentSpinAngle = 0;
+        
+        // ======================
+        // INITIALIZATION
+        // ======================
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            registerServiceWorker();
+        });
+        
+        function initializeApp() {
+            checkDailyStreak();
+            updateStats();
+            loadDashboard();
+            setupEventListeners();
+        }
+        
+        function checkDailyStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            const lastActive = currentUser.lastActive;
+            
+            if (lastActive !== today) {
+                // Check if we should reset streak
+                if (lastActive) {
+                    const lastDate = new Date(lastActive);
+                    const todayDate = new Date(today);
+                    const diffTime = Math.abs(todayDate - lastDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays > 1) {
+                        currentUser.streak = 0;
+                        showFeedback('Streak Anda berakhir karena tidak aktif kemarin', 'info');
+                    }
+                }
+                
+                // Update last active date
+                currentUser.lastActive = today;
+                localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
+                updateStats();
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('xp-count').textContent = currentUser.xp;
+            document.getElementById('streak-count').textContent = currentUser.streak;
+        }
+        
+        function setupEventListeners() {
+            // Navigation buttons
+            document.getElementById('new-deck-btn').addEventListener('click', showCreateDeckPage);
+            document.getElementById('back-to-dashboard-btn').addEventListener('click', loadDashboard);
+            document.getElementById('back-to-decks-btn').addEventListener('click', () => {
+                resetNavigatorState();
+                loadDashboard();
+            });
+            document.getElementById('add-option-btn').addEventListener('click', addOptionField);
+            document.getElementById('save-deck-btn').addEventListener('click', saveDeck);
+            document.getElementById('spin-btn').addEventListener('click', spinWheel);
+            document.getElementById('finish-navigator-btn').addEventListener('click', finishNavigator);
+            document.getElementById('submit-rating-btn').addEventListener('click', submitRating);
+            document.getElementById('skip-rating-btn').addEventListener('click', skipRating);
+            
+            // Star rating
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.value);
+                    updateStarRating();
+                });
+                
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.dataset.value);
+                    document.querySelectorAll('.star').forEach(s => {
+                        if (parseInt(s.dataset.value) <= value) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    if (selectedRating === 0) {
+                        document.querySelectorAll('.star').forEach(s => {
+                            s.classList.remove('active');
+                        });
+                    }
+                });
+            });
+            
+            // Remove option button delegate
+            document.getElementById('options-container').addEventListener('click', (e) => {
+                if (e.target.closest('.btn-remove-option') || e.target.classList.contains('btn-remove-option')) {
+                    const item = e.target.closest('.option-item');
+                    if (item && document.querySelectorAll('.option-item').length > 1) {
+                        item.remove();
+                    }
+                }
+            });
+        }
+        
+        // ======================
+        // PAGE NAVIGATION
+        // ======================
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        function loadDashboard() {
+            showPage('dashboard');
+            
+            const decksList = document.getElementById('decks-list');
+            const decks = getDecks();
+            
+            if (decks.length === 0) {
+                decksList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-cubes empty-icon"></i>
+                        <h3>Belum ada deck</h3>
+                        <p>Buat deck pertama Anda untuk mulai mengambil keputusan dengan cepat!</p>
+                        <button id="create-first-deck-btn" class="btn btn-primary" style="margin-top: 1.5rem">
+                            <i class="fas fa-plus"></i> Buat Deck Pertama
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('create-first-deck-btn').addEventListener('click', showCreateDeckPage);
+                return;
+            }
+            
+            decksList.innerHTML = '';
+            
+            decks.forEach(deck => {
+                const card = document.createElement('div');
+                card.className = 'deck-card';
+                card.innerHTML = `
+                    <div class="deck-content">
+                        <div class="deck-type">${getDeckTypeLabel(deck.type)}</div>
+                        <h3 class="deck-title">${deck.name}</h3>
+                        <div class="deck-stats">
+                            <span><i class="fas fa-list"></i> ${deck.options.length} opsi</span>
+                            <span><i class="fas fa-history"></i> ${getDeckUsageCount(deck.deckId)}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => startNavigator(deck);
+                decksList.appendChild(card);
+            });
+        }
+        
+        function showCreateDeckPage() {
+            showPage('create-deck');
+            document.getElementById('deck-name').value = '';
+            document.getElementById('options-container').innerHTML = `
+                <div class="option-item">
+                    <input type="text" class="option-input form-control" placeholder="Opsi 1">
+                    <button class="btn btn-remove-option"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        }
+        
+        // ======================
+        // DECK MANAGEMENT
+        // ======================
+        function getDecks() {
+            return JSON.parse(localStorage.getItem('DecideNowDecks')) || [];
+        }
+        
+        function getDeckTypeLabel(type) {
+            const labels = {
+                'Food': '🍕 Makanan',
+                'Task': '✅ Tugas',
+                'Workout': '💪 Olahraga',
+                'Entertainment': '🎬 Hiburan',
+                'Other': '✨ Lainnya'
+            };
+            return labels[type] || type;
+        }
+        
+        function getDeckUsageCount(deckId) {
+            const history = getHistory();
+            return history.filter(h => h.deckId === deckId).length;
+        }
+        
+        function addOptionField() {
+            const container = document.getElementById('options-container');
+            const item = document.createElement('div');
+            item.className = 'option-item';
+            item.innerHTML = `
+                <input type="text" class="option-input form-control" placeholder="Opsi ${container.children.length + 1}">
+                <button class="btn btn-remove-option"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(item);
+        }
+        
+        function saveDeck() {
+            const name = document.getElementById('deck-name').value.trim();
+            const type = document.getElementById('deck-type').value;
+            const options = Array.from(document.querySelectorAll('.option-input'))
+                .map(input => input.value.trim())
+                .filter(val => val);
+            
+            if (!name) {
+                showFeedback('Silakan isi nama deck', 'error');
+                document.getElementById('deck-name').focus();
+                return;
+            }
+            
+            if (options.length < 2) {
+                showFeedback('Deck minimal harus memiliki 2 opsi', 'error');
+                return;
+            }
+            
+            // Check for duplicate options
+            const uniqueOptions = [...new Set(options)];
+            if (uniqueOptions.length !== options.length) {
+                showFeedback('Opsi tidak boleh ada yang sama', 'error');
+                return;
+            }
+            
+            const newDeck = {
+                deckId: Date.now().toString(),
+                name,
+                type,
+                options: uniqueOptions.map((opt, i) => ({
+                    optionId: `opt-${Date.now()}-${i}`,
+                    text: opt,
+                    contextTags: [],
+                    impactScore: Math.floor(Math.random() * 3) + 2, // Random 2-4
+                    effortScore: Math.floor(Math.random() * 3) + 2 // Random 2-4
+                }))
+            };
+            
+            const decks = getDecks();
+            decks.push(newDeck);
+            localStorage.setItem('DecideNowDecks', JSON.stringify(decks));
+            
+            showFeedback('Deck berhasil dibuat!', 'success');
+            setTimeout(() => {
+                loadDashboard();
+            }, 500);
+        }
+        
+        // ======================
+        // PRIORITY SPINNER NAVIGATION
+        // ======================
+        function startNavigator(deck) {
+            currentDeck = deck;
+            deckToRate = deck;
+            showPage('navigator');
+            document.getElementById('deck-title').textContent = `Apa yang akan Anda pilih untuk ${deck.name}?`;
+            
+            // Reset state
+            resetNavigatorState();
+            
+            // Generate spinner segments based on options
+            generateSpinnerSegments(deck.options);
+        }
+        
+        function resetNavigatorState() {
+            isSpinning = false;
+            currentResult = null;
+            document.getElementById('spinner-wheel').innerHTML = '';
+            document.getElementById('spinner-result').innerHTML = '';
+            document.getElementById('spinner-result').classList.remove('show');
+            document.getElementById('finish-navigator-btn').classList.add('hidden');
+            spinnerSegments = [];
+            currentSpinAngle = 0;
+        }
+        
+        function generateSpinnerSegments(options) {
+            const wheel = document.getElementById('spinner-wheel');
+            wheel.innerHTML = '';
+            
+            if (options.length === 0) {
+                wheel.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>Deck ini tidak memiliki opsi. Silakan edit deck Anda.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Calculate total weight
+            const totalWeight = options.reduce((sum, opt) => sum + calculateWeight(opt), 0);
+            
+            // Generate segments
+            let startAngle = 0;
+            spinnerSegments = [];
+            
+            options.forEach((opt, index) => {
+                const weight = calculateWeight(opt);
+                const angle = (weight / totalWeight) * 360;
+                
+                const segment = document.createElement('div');
+                segment.className = 'segment';
+                segment.style.transform = `rotate(${startAngle}deg)`;
+                segment.style.width = `${angle > 180 ? 100 : (angle / 360) * 200}%`;
+                segment.style.clipPath = `polygon(50% 50%, 100% 0%, 100% 100%)`;
+                segment.innerHTML = `<div class="segment-text">${opt.text.substring(0, 10)}</div>`;
+                segment.onclick = () => {
+                    if (!isSpinning) {
+                        selectSegment(index);
+                    }
+                };
+                wheel.appendChild(segment);
+                
+                spinnerSegments.push({
+                    ...opt,
+                    angle,
+                    startAngle,
+                    endAngle: startAngle + angle
+                });
+                
+                startAngle += angle;
+            });
+        }
+        
+        function calculateWeight(option) {
+            // Bobot = (ImpactScore * 3) + (5 - EffortScore)
+            return (option.impactScore * 3) + (5 - option.effortScore);
+        }
+        
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const wheel = document.getElementById('spinner-wheel');
+            
+            // Add a random rotation for excitement
+            const randomRotation = Math.random() * 360;
+            const fullRotations = 5; // 5 full rotations
+            const targetAngle = fullRotations * 360 + randomRotation;
+            
+            // Animate the spin
+            wheel.style.transition = 'transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            wheel.style.transform = `rotate(${targetAngle}deg)`;
+            
+            // After animation ends, determine result
+            setTimeout(() => {
+                // Calculate which segment was selected
+                const finalAngle = targetAngle % 360;
+                const selectedSegment = findSegmentByAngle(finalAngle);
+                
+                if (selectedSegment) {
+                    currentResult = selectedSegment;
+                    showResult(selectedSegment.text);
+                }
+                
+                isSpinning = false;
+            }, 4000);
+        }
+        
+        function findSegmentByAngle(angle) {
+            for (let i = 0; i < spinnerSegments.length; i++) {
+                const seg = spinnerSegments[i];
+                if (angle >= seg.startAngle && angle < seg.endAngle) {
+                    return seg;
+                }
+            }
+            // Fallback: return first segment
+            return spinnerSegments[0];
+        }
+        
+        function showResult(resultText) {
+            const resultElement = document.getElementById('spinner-result');
+            resultElement.textContent = resultText;
+            resultElement.classList.add('show');
+            
+            // Show finish button
+            document.getElementById('finish-navigator-btn').classList.remove('hidden');
+        }
+        
+        function selectSegment(index) {
+            if (isSpinning) return;
+            
+            currentResult = spinnerSegments[index];
+            showResult(currentResult.text);
+        }
+        
+        function finishNavigator() {
+            if (!currentResult) {
+                showFeedback('Tidak ada hasil yang dipilih', 'error');
+                return;
+            }
+            
+            // Save to history
+            const history = getHistory();
+            const today = new Date().toISOString().split('T')[0];
+            
+            currentHistoryId = `hist-${Date.now()}`;
+            const newHistory = {
+                historyId: currentHistoryId,
+                deckId: currentDeck.deckId,
+                deckName: currentDeck.name,
+                date: today,
+                result: currentResult.text,
+                rating: null
+            };
+            
+            history.push(newHistory);
+            localStorage.setItem('DecideNowHistory', JSON.stringify(history));
+            
+            // Update streak and XP
+            updateStreak();
+            addXP(10);
+            
+            // Show rating page
+            showPage('rating');
+            document.getElementById('selected-result').textContent = currentResult.text;
+            
+            // Reset state
+            document.getElementById('finish-navigator-btn').classList.add('hidden');
+        }
+        
+        function getHistory() {
+            return JSON.parse(localStorage.getItem('DecideNowHistory')) || [];
+        }
+        
+        function updateStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            const lastDecisionDate = localStorage.getItem('DecideNowLastDecisionDate');
+            
+            if (lastDecisionDate !== today) {
+                currentUser.streak = (currentUser.streak || 0) + 1;
+                localStorage.setItem('DecideNowLastDecisionDate', today);
+                updateStats();
+                showFeedback(`Streak Anda meningkat menjadi ${currentUser.streak} hari! 🔥`, 'success');
+            }
+        }
+        
+        function addXP(amount) {
+            currentUser.xp = (currentUser.xp || 0) + amount;
+            localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
+            updateStats();
+        }
+        
+        // ======================
+        // RATING SYSTEM
+        // ======================
+        function updateStarRating() {
+            document.querySelectorAll('.star').forEach(star => {
+                const value = parseInt(star.dataset.value);
+                star.classList.toggle('active', value <= selectedRating);
+            });
+            
+            const feedbackElement = document.getElementById('rating-feedback');
+            const messages = [
+                "Sayang sekali pengalaman Anda tidak sesuai harapan 😔",
+                "Masih perlu perbaikan untuk pengalaman yang lebih baik 🤔",
+                "Cukup baik, tetapi masih bisa lebih baik lagi 🙂",
+                "Bagus! Pengalaman yang menyenangkan 😊",
+                "Luar biasa! Pengalaman terbaik hari ini! 🎉"
+            ];
+            
+            if (selectedRating > 0 && selectedRating <= 5) {
+                feedbackElement.textContent = messages[selectedRating - 1];
+                feedbackElement.style.color = selectedRating >= 4 ? '#43d9ad' : '#ff6b6b';
+            } else {
+                feedbackElement.textContent = "Ketuk bintang untuk memberi rating";
+                feedbackElement.style.color = '';
+            }
+        }
+        
+        function submitRating() {
+            if (selectedRating === 0) {
+                showFeedback('Silakan beri rating terlebih dahulu', 'error');
+                return;
+            }
+            
+            // Update history with rating
+            const history = getHistory();
+            const lastHistory = history.find(h => h.historyId === currentHistoryId);
+            if (lastHistory) {
+                lastHistory.rating = selectedRating;
+                localStorage.setItem('DecideNowHistory', JSON.stringify(history));
+            }
+            
+            // Award bonus XP for high rating
+            if (selectedRating >= 4) {
+                addXP(15);
+                showConfetti();
+                showFeedback(`Luar biasa! Anda mendapatkan 15 XP bonus! Total XP: ${currentUser.xp}`, 'success');
+            } else {
+                showFeedback('Terima kasih atas feedback Anda!', 'info');
+            }
+            
+            // Reset rating UI
+            selectedRating = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            document.getElementById('rating-feedback').textContent = 'Ketuk bintang untuk memberi rating';
+            document.getElementById('rating-feedback').style.color = '';
+            
+            // Return to dashboard after delay
+            setTimeout(() => {
+                resetAllState();
+                loadDashboard();
+            }, 1500);
+        }
+        
+        function skipRating() {
+            showFeedback('Keputusan telah disimpan', 'info');
+            
+            // Return to dashboard after delay
+            setTimeout(() => {
+                resetAllState();
+                loadDashboard();
+            }, 800);
+        }
+        
+        function resetAllState() {
+            currentDeck = null;
+            currentResult = null;
+            currentHistoryId = null;
+            isSpinning = false;
+            selectedRating = 0;
+            deckToRate = null;
+        }
+        
+        // ======================
+        // UI FEEDBACK & EFFECTS
+        // ======================
+        function showFeedback(message, type = 'info') {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type} show`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            const toastContainer = document.getElementById('toast-container');
+            toastContainer.innerHTML = ''; // Clear previous toasts
+            toastContainer.appendChild(toast);
+            
+            // Remove after delay
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        function showConfetti() {
+            const container = document.getElementById('confetti-container');
+            if (!container) return; // Guard clause
+            
+            container.innerHTML = '';
+            
+            const colors = ['#6a5acd', '#ff6b6b', '#43d9ad', '#f9cb28', '#54a0ff'];
+            const confettiCount = 150;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.width = `${Math.random() * 15 + 5}px`;
+                confetti.style.height = `${Math.random() * 20 + 10}px`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.opacity = Math.random();
+                
+                container.appendChild(confetti);
+                
+                // Animate using Web Animations API for better performance and control
+                const animationDuration = Math.random() * 3 + 2;
+                const delay = Math.random() * 2;
+                
+                const animation = confetti.animate([
+                    { 
+                        transform: 'translateY(-100px) rotate(0deg)',
+                        opacity: 1
+                    },
+                    {
+                        transform: `translateY(${window.innerHeight + 100}px) rotate(${720 + Math.random() * 720}deg)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: animationDuration * 1000,
+                    delay: delay * 1000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                // Cleanup animation when it finishes
+                animation.onfinish = () => {
+                    if (container.contains(confetti)) {
+                        container.removeChild(confetti);
+                    }
+                };
+            }
+            
+            // Clean up after animation
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        // ======================
+        // SERVICE WORKER
+        // ======================
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(registration => {
+                            console.log('ServiceWorker registered with scope:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('ServiceWorker registration failed:', error);
+                        });
+                });
+            }
+        }
+        
+        // ======================
+        // APP CACHE & OFFLINE SUPPORT
+        // ======================
+        function setupAppCache() {
+            // Create dummy service worker file if not exists
+            if (!localStorage.getItem('DecideNowServiceWorker')) {
+                localStorage.setItem('DecideNowServiceWorker', 'true');
+            }
+            
+            // Cache initial data
+            if (!localStorage.getItem('DecideNowDecks')) {
+                initializeDemoData();
+            }
+        }
+        
+        // ======================
+        // DEMO DATA FOR FIRST RUN
+        // ======================
+        function initializeDemoData() {
+            const demoDecks = [
+                {
+                    deckId: 'food-1',
+                    name: 'Makan Siang',
+                    type: 'Food',
+                    options: [
+                        { optionId: 'opt-1', text: 'Sushi', impactScore: 4, effortScore: 3 },
+                        { optionId: 'opt-2', text: 'Nasi Goreng', impactScore: 5, effortScore: 2 },
+                        { optionId: 'opt-3', text: 'Ayam Bakar', impactScore: 4, effortScore: 3 },
+                        { optionId: 'opt-4', text: 'Bakso', impactScore: 3, effortScore: 2 }
+                    ]
+                },
+                {
+                    deckId: 'workout-1',
+                    name: 'Olahraga Sore',
+                    type: 'Workout',
+                    options: [
+                        { optionId: 'opt-5', text: 'Lari 5km', impactScore: 5, effortScore: 4 },
+                        { optionId: 'opt-6', text: 'Yoga 30 menit', impactScore: 4, effortScore: 2 },
+                        { optionId: 'opt-7', text: 'Angkat Beban', impactScore: 5, effortScore: 5 },
+                        { optionId: 'opt-8', text: 'Jalan Kaki', impactScore: 3, effortScore: 1 }
+                    ]
+                }
+            ];
+            
+            localStorage.setItem('DecideNowDecks', JSON.stringify(demoDecks));
+            showFeedback('Deck contoh telah dibuat untuk Anda!', 'info');
+        }
+        
+        // Initialize app cache and demo data
+        setupAppCache();
+        
+        // Handle beforeunload to clean up
+        window.addEventListener('beforeunload', () => {
+            // Nothing specific to clean up for spinner mode
+        });
+        
+        // Handle visibility change to pause/resume timer (not needed for spinner)
+        document.addEventListener('visibilitychange', () => {
+            // Not needed for spinner mode
+        });
+    </script>
+    
+    <!-- Service Worker -->
+    <script>
+        // Create service worker dynamically
+        if ('serviceWorker' in navigator) {
+            const serviceWorkerContent = `
+                const CACHE_NAME = 'decidenow-v1';
+                const urlsToCache = [
+                    '/',
+                    '/index.html',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+                ];
+
+                self.addEventListener('install', event => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.addAll(urlsToCache))
+                    );
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => response || fetch(event.request))
+                    );
+                });
+            `;
+            
+            // Create a Blob with the service worker content
+            const blob = new Blob([serviceWorkerContent], {type: 'application/javascript'});
+            const serviceWorkerURL = URL.createObjectURL(blob);
+            
+            // Register the service worker
+            navigator.serviceWorker.register(serviceWorkerURL)
+                .then(registration => console.log('ServiceWorker registered with scope:', registration.scope))
+                .catch(error => console.log('ServiceWorker registration failed:', error));
+        }
+    </script>
+</body>
+</html>
