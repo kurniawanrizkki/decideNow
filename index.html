@@ -25,10 +25,6 @@
             --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
             --border-radius: 24px;
             --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --spinner-threshold: 150px;
-            --spinner-rotation: 25deg;
-            --like-color: rgba(67, 217, 173, 0.2);
-            --dislike-color: rgba(255, 77, 109, 0.2);
         }
 
         * {
@@ -36,7 +32,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+   
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-gradient);
@@ -384,13 +380,13 @@
             color: var(--text-light);
         }
 
-        /* Spinner Interface */
+        /* IMPROVED SPINNER INTERFACE */
         .spinner-container {
             height: 80vh;
-            max-height: 700px;
+            max-height: 600px;
             position: relative;
             margin: 1.5rem 0 3rem;
-            background: rgba(255, 255, 255, 0.7);
+            background: linear-gradient(145deg, #f8f9ff, #eef1ff);
             border-radius: 28px;
             box-shadow: var(--shadow-lg);
             overflow: hidden;
@@ -398,58 +394,120 @@
             align-items: center;
             justify-content: center;
             touch-action: none;
-            background: linear-gradient(145deg, #f8f9ff, #eef1ff);
             border: 1px solid rgba(106, 90, 205, 0.15);
         }
 
-        .spinner-wheel {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
+        /* Pointer/Arrow at top */
+        .spinner-pointer {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid var(--danger);
+            z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .spinner-pointer::after {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: -20px;
+            width: 40px;
+            height: 30px;
+            border: 3px solid white;
+            border-bottom: none;
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Wheel wrapper for center positioning */
+        .spinner-wheel-wrapper {
             position: relative;
+            width: 350px;
+            height: 350px;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .spinner-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
             cursor: pointer;
-            transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 2px solid var(--primary);
+            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            border: 8px solid white;
             background: white;
             overflow: hidden;
         }
 
-        .segment {
+        .spinner-wheel.spinning {
+            cursor: not-allowed;
+        }
+
+        /* Center circle decoration */
+        .spinner-center {
             position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: bottom right;
-            left: 0;
-            top: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            z-index: 5;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 5px solid white;
+            font-size: 1.8rem;
+            color: white;
         }
 
-        .segment:hover {
-            transform: scale(1.05) rotate(5deg);
-            z-index: 10;
-        }
-
-        .segment-text {
+        /* Wheel segments */
+        .wheel-segment {
             position: absolute;
-            left: 10%;
-            top: 40%;
-            transform: rotate(45deg);
-            font-size: 0.7rem;
-            white-space: nowrap;
-            color: var(--text);
-            font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        .segment-content {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: 50% 100%;
+        }
+
+.segment-text {
+    position: absolute;
+    left: 55%;
+    top: 30%;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    transform: translateX(-50%);
+}        /* Result overlay */
         .spinner-result {
             position: absolute;
             top: 0;
@@ -457,22 +515,51 @@
             width: 100%;
             height: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary);
-            z-index: 5;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 15;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
             border-radius: 28px;
-            box-shadow: var(--shadow-lg);
+            text-align: center;
+            padding: 2rem;
         }
 
         .spinner-result.show {
             opacity: 1;
+            animation: resultPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes resultPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .result-text-large {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-subtext {
+            font-size: 1.1rem;
+            color: var(--text-light);
         }
 
         .decision-actions {
@@ -480,10 +567,7 @@
             justify-content: center;
             gap: 2.5rem;
             margin-top: 1.5rem;
-            position: absolute;
             bottom: 2rem;
-            left: 0;
-            right: 0;
             z-index: 20;
         }
 
@@ -496,6 +580,15 @@
             justify-content: center;
             font-size: 2.2rem;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
         }
 
         .btn-spin {
@@ -504,43 +597,14 @@
             border: 3px solid var(--primary);
         }
 
-        .btn-like {
-            background: white;
-            color: var(--success);
-            border: 3px solid var(--success);
+        .btn-spin:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        .timer-container {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 15;
-            backdrop-filter: blur(5px);
-            border: 2px solid var(--primary);
-        }
-
-        .timer-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            clip-path: inset(0 0 50% 0);
-            background: var(--primary);
-            transform-origin: center;
-            transition: transform 0.1s linear;
-            z-index: -1;
+        .btn-spin:not(:disabled):hover {
+            background: var(--primary-dark);
+            box-shadow: 0 8px 25px rgba(106, 90, 205, 0.4);
         }
 
         /* Rating Page */
@@ -758,11 +822,23 @@
                 font-size: 1.7rem;
             }
             
-            .spinner-wheel {
-                width: 150px;
-                height: 150px;
+            .spinner-wheel-wrapper {
+                width: 280px;
+                height: 280px;
             }
             
+            .spinner-center {
+                width: 60px;
+                height: 60px;
+                font-size: 1.4rem;
+            }
+            
+         .segment-text {
+        font-size: 0.7rem;
+        left: 50%;
+        top: 25%;
+        max-width: 70px;
+    }  
             .decision-actions {
                 gap: 1.5rem;
             }
@@ -876,11 +952,24 @@
                     <h1 id="deck-title" class="page-title">Pilih Opsi Terbaik</h1>
                     
                     <div class="spinner-container">
-                        <div class="spinner-wheel" id="spinner-wheel">
-                            <!-- Segments will be generated here -->
+                        <!-- Pointer at top -->
+                        <div class="spinner-pointer"></div>
+                        
+                        <!-- Spinner wheel -->
+                        <div class="spinner-wheel-wrapper">
+                            <div class="spinner-wheel" id="spinner-wheel">
+                                <!-- Segments will be generated here -->
+                            </div>
+                            <div class="spinner-center">
+                                <i class="fas fa-bolt"></i>
+                            </div>
                         </div>
+                        
+                        <!-- Result overlay -->
                         <div class="spinner-result" id="spinner-result">
-                            <!-- Result will be displayed here -->
+                            <div class="result-icon">🎉</div>
+                            <div class="result-text-large" id="result-text-large"></div>
+                            <div class="result-subtext">Ini pilihan terbaik untuk Anda!</div>
                         </div>
                     </div>
                     
@@ -889,11 +978,11 @@
                             <i class="fas fa-sync-alt"></i>
                         </button>
                         <button id="finish-navigator-btn" class="btn btn-secondary hidden">
-                            <i class="fas fa-trophy"></i> Selesai & Simpan Keputusan
+                            <i class="fas fa-trophy"></i> Selesai
                         </button>
                     </div>
                     
-                    <button id="back-to-decks-btn" class="btn btn-light" style="margin-top: 1rem">
+                    <button id="back-to-decks-btn" class="btn btn-light" style="margin-top: 4rem">
                         <i class="fas fa-arrow-left"></i> Kembali ke Deck
                     </button>
                 </div>
@@ -956,14 +1045,19 @@
         let selectedRating = 0;
         let deckToRate = null;
         let spinnerSegments = [];
-        let currentSpinAngle = 0;
+        
+        // Color palette for segments
+        const segmentColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+            '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788',
+            '#FF8FAB', '#6C5CE7', '#00B894', '#FDCB6E', '#E17055'
+        ];
         
         // ======================
         // INITIALIZATION
         // ======================
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
-            registerServiceWorker();
         });
         
         function initializeApp() {
@@ -978,7 +1072,6 @@
             const lastActive = currentUser.lastActive;
             
             if (lastActive !== today) {
-                // Check if we should reset streak
                 if (lastActive) {
                     const lastDate = new Date(lastActive);
                     const todayDate = new Date(today);
@@ -991,7 +1084,6 @@
                     }
                 }
                 
-                // Update last active date
                 currentUser.lastActive = today;
                 localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
                 updateStats();
@@ -1004,7 +1096,6 @@
         }
         
         function setupEventListeners() {
-            // Navigation buttons
             document.getElementById('new-deck-btn').addEventListener('click', showCreateDeckPage);
             document.getElementById('back-to-dashboard-btn').addEventListener('click', loadDashboard);
             document.getElementById('back-to-decks-btn').addEventListener('click', () => {
@@ -1045,7 +1136,6 @@
                 });
             });
             
-            // Remove option button delegate
             document.getElementById('options-container').addEventListener('click', (e) => {
                 if (e.target.closest('.btn-remove-option') || e.target.classList.contains('btn-remove-option')) {
                     const item = e.target.closest('.option-item');
@@ -1171,7 +1261,6 @@
                 return;
             }
             
-            // Check for duplicate options
             const uniqueOptions = [...new Set(options)];
             if (uniqueOptions.length !== options.length) {
                 showFeedback('Opsi tidak boleh ada yang sama', 'error');
@@ -1186,8 +1275,8 @@
                     optionId: `opt-${Date.now()}-${i}`,
                     text: opt,
                     contextTags: [],
-                    impactScore: Math.floor(Math.random() * 3) + 2, // Random 2-4
-                    effortScore: Math.floor(Math.random() * 3) + 2 // Random 2-4
+                    impactScore: Math.floor(Math.random() * 3) + 2,
+                    effortScore: Math.floor(Math.random() * 3) + 2
                 }))
             };
             
@@ -1202,7 +1291,7 @@
         }
         
         // ======================
-        // PRIORITY SPINNER NAVIGATION
+        // IMPROVED SPINNER NAVIGATION
         // ======================
         function startNavigator(deck) {
             currentDeck = deck;
@@ -1210,133 +1299,155 @@
             showPage('navigator');
             document.getElementById('deck-title').textContent = `Apa yang akan Anda pilih untuk ${deck.name}?`;
             
-            // Reset state
             resetNavigatorState();
-            
-            // Generate spinner segments based on options
-            generateSpinnerSegments(deck.options);
+            generateSpinnerWheel(deck.options);
         }
         
         function resetNavigatorState() {
             isSpinning = false;
             currentResult = null;
             document.getElementById('spinner-wheel').innerHTML = '';
-            document.getElementById('spinner-result').innerHTML = '';
             document.getElementById('spinner-result').classList.remove('show');
             document.getElementById('finish-navigator-btn').classList.add('hidden');
+            document.getElementById('spin-btn').disabled = false;
             spinnerSegments = [];
-            currentSpinAngle = 0;
         }
         
-        function generateSpinnerSegments(options) {
-            const wheel = document.getElementById('spinner-wheel');
-            wheel.innerHTML = '';
-            
-            if (options.length === 0) {
-                wheel.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                        <p>Deck ini tidak memiliki opsi. Silakan edit deck Anda.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Calculate total weight
-            const totalWeight = options.reduce((sum, opt) => sum + calculateWeight(opt), 0);
-            
-            // Generate segments
-            let startAngle = 0;
-            spinnerSegments = [];
-            
-            options.forEach((opt, index) => {
-                const weight = calculateWeight(opt);
-                const angle = (weight / totalWeight) * 360;
-                
-                const segment = document.createElement('div');
-                segment.className = 'segment';
-                segment.style.transform = `rotate(${startAngle}deg)`;
-                segment.style.width = `${angle > 180 ? 100 : (angle / 360) * 200}%`;
-                segment.style.clipPath = `polygon(50% 50%, 100% 0%, 100% 100%)`;
-                segment.innerHTML = `<div class="segment-text">${opt.text.substring(0, 10)}</div>`;
-                segment.onclick = () => {
-                    if (!isSpinning) {
-                        selectSegment(index);
-                    }
-                };
-                wheel.appendChild(segment);
-                
-                spinnerSegments.push({
-                    ...opt,
-                    angle,
-                    startAngle,
-                    endAngle: startAngle + angle
-                });
-                
-                startAngle += angle;
-            });
-        }
+    function generateSpinnerWheel(options) {
+    const wheel = document.getElementById('spinner-wheel');
+    wheel.innerHTML = '';
+    wheel.style.transform = 'rotate(0deg)';
+    
+    if (options.length === 0) {
+        wheel.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>Deck ini tidak memiliki opsi.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const totalOptions = options.length;
+    const segmentAngle = 360 / totalOptions;
+    
+    spinnerSegments = [];
+    
+    options.forEach((option, index) => {
+        const segment = document.createElement('div');
+        segment.className = 'wheel-segment';
         
-        function calculateWeight(option) {
-            // Bobot = (ImpactScore * 3) + (5 - EffortScore)
-            return (option.impactScore * 3) + (5 - option.effortScore);
-        }
+        const rotation = index * segmentAngle;
+        const color = segmentColors[index % segmentColors.length];
         
+        segment.style.transform = `rotate(${rotation}deg) skewY(${-90 + segmentAngle}deg)`;
+        segment.style.background = color;
+        
+        // BUAT TEXT LANGSUNG DI SEGMENT (TANPA WRAPPER)
+        const text = document.createElement('span');
+        text.style.position = 'absolute';
+        text.style.left = '70%';
+        text.style.top = '40%';
+        text.style.transform = `skewY(${90 - segmentAngle}deg) rotate(${segmentAngle / 2}deg)`;
+        text.style.fontSize = '0.85rem';
+        text.style.fontWeight = '700';
+        text.style.color = 'white';
+        text.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.6)';
+        text.style.whiteSpace = 'nowrap';
+        text.style.pointerEvents = 'none';
+        
+        const displayText = option.text.length > 12 ? option.text.substring(0, 10) + '...' : option.text;
+        // text.textContent = displayText;
+        
+        segment.appendChild(text);
+        wheel.appendChild(segment);
+        
+        spinnerSegments.push({
+            ...option,
+            startAngle: rotation,
+            endAngle: rotation + segmentAngle,
+            color: color
+        });
+    });
+}        
         function spinWheel() {
-            if (isSpinning) return;
-            
-            isSpinning = true;
-            const wheel = document.getElementById('spinner-wheel');
-            
-            // Add a random rotation for excitement
-            const randomRotation = Math.random() * 360;
-            const fullRotations = 5; // 5 full rotations
-            const targetAngle = fullRotations * 360 + randomRotation;
-            
-            // Animate the spin
-            wheel.style.transition = 'transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            wheel.style.transform = `rotate(${targetAngle}deg)`;
-            
-            // After animation ends, determine result
-            setTimeout(() => {
-                // Calculate which segment was selected
-                const finalAngle = targetAngle % 360;
-                const selectedSegment = findSegmentByAngle(finalAngle);
-                
-                if (selectedSegment) {
-                    currentResult = selectedSegment;
-                    showResult(selectedSegment.text);
-                }
-                
-                isSpinning = false;
-            }, 4000);
-        }
-        
-        function findSegmentByAngle(angle) {
-            for (let i = 0; i < spinnerSegments.length; i++) {
-                const seg = spinnerSegments[i];
-                if (angle >= seg.startAngle && angle < seg.endAngle) {
-                    return seg;
-                }
-            }
-            // Fallback: return first segment
-            return spinnerSegments[0];
-        }
+    if (isSpinning) return;
+    
+    isSpinning = true;
+    document.getElementById('spin-btn').disabled = true;
+    
+    const wheel = document.getElementById('spinner-wheel');
+    wheel.classList.add('spinning');
+    
+    // RANDOM SELECTION
+    const selectedIndex = Math.floor(Math.random() * spinnerSegments.length);
+    const selectedSegment = spinnerSegments[selectedIndex];
+    
+    // HITUNG ROTASI YANG BENAR
+    // Panah ada di atas (0 derajat), jadi kita perlu rotate wheel agar segment yang dipilih ada di atas
+    const segmentMiddleAngle = selectedSegment.startAngle + ((selectedSegment.endAngle - selectedSegment.startAngle) / 2);
+    
+    // Rotasi penuh (5 putaran) + offset agar segment terpilih berada di posisi panah (atas/0 derajat)
+    const baseRotation = 360 * 5; // 5 putaran penuh
+    const targetRotation = baseRotation + (360 - segmentMiddleAngle) + (Math.random() * 20 - 10); // tambah random ±10 derajat untuk variasi
+    
+    // Apply rotation
+    wheel.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+    wheel.style.transform = `rotate(${targetRotation}deg)`;
+    
+    // Show result after spin
+    setTimeout(() => {
+        currentResult = selectedSegment;
+        showResult(selectedSegment.text);
+        isSpinning = false;
+        wheel.classList.remove('spinning');
+    }, 5000);
+}
         
         function showResult(resultText) {
             const resultElement = document.getElementById('spinner-result');
-            resultElement.textContent = resultText;
+            const resultTextElement = document.getElementById('result-text-large');
+            
+            resultTextElement.textContent = resultText;
             resultElement.classList.add('show');
             
-            // Show finish button
             document.getElementById('finish-navigator-btn').classList.remove('hidden');
+            
+            // Celebratory sound effect (visual feedback)
+            showMiniConfetti();
         }
         
-        function selectSegment(index) {
-            if (isSpinning) return;
+        function showMiniConfetti() {
+            const container = document.getElementById('confetti-container');
+            if (!container) return;
             
-            currentResult = spinnerSegments[index];
-            showResult(currentResult.text);
+            const colors = ['#6a5acd', '#ff6b6b', '#43d9ad', '#f9cb28', '#54a0ff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 15 + 8}px`;
+                
+                container.appendChild(confetti);
+                
+                const animation = confetti.animate([
+                    { transform: 'translateY(-50px) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${720}deg)`, opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 1000,
+                    delay: Math.random() * 500,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                animation.onfinish = () => {
+                    if (container.contains(confetti)) {
+                        container.removeChild(confetti);
+                    }
+                };
+            }
         }
         
         function finishNavigator() {
@@ -1345,7 +1456,6 @@
                 return;
             }
             
-            // Save to history
             const history = getHistory();
             const today = new Date().toISOString().split('T')[0];
             
@@ -1362,15 +1472,11 @@
             history.push(newHistory);
             localStorage.setItem('DecideNowHistory', JSON.stringify(history));
             
-            // Update streak and XP
             updateStreak();
             addXP(10);
             
-            // Show rating page
             showPage('rating');
             document.getElementById('selected-result').textContent = currentResult.text;
-            
-            // Reset state
             document.getElementById('finish-navigator-btn').classList.add('hidden');
         }
         
@@ -1385,6 +1491,7 @@
             if (lastDecisionDate !== today) {
                 currentUser.streak = (currentUser.streak || 0) + 1;
                 localStorage.setItem('DecideNowLastDecisionDate', today);
+                localStorage.setItem('DecideNowUser', JSON.stringify(currentUser));
                 updateStats();
                 showFeedback(`Streak Anda meningkat menjadi ${currentUser.streak} hari! 🔥`, 'success');
             }
@@ -1429,7 +1536,6 @@
                 return;
             }
             
-            // Update history with rating
             const history = getHistory();
             const lastHistory = history.find(h => h.historyId === currentHistoryId);
             if (lastHistory) {
@@ -1437,7 +1543,6 @@
                 localStorage.setItem('DecideNowHistory', JSON.stringify(history));
             }
             
-            // Award bonus XP for high rating
             if (selectedRating >= 4) {
                 addXP(15);
                 showConfetti();
@@ -1446,13 +1551,11 @@
                 showFeedback('Terima kasih atas feedback Anda!', 'info');
             }
             
-            // Reset rating UI
             selectedRating = 0;
             document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
             document.getElementById('rating-feedback').textContent = 'Ketuk bintang untuk memberi rating';
             document.getElementById('rating-feedback').style.color = '';
             
-            // Return to dashboard after delay
             setTimeout(() => {
                 resetAllState();
                 loadDashboard();
@@ -1462,7 +1565,6 @@
         function skipRating() {
             showFeedback('Keputusan telah disimpan', 'info');
             
-            // Return to dashboard after delay
             setTimeout(() => {
                 resetAllState();
                 loadDashboard();
@@ -1482,7 +1584,6 @@
         // UI FEEDBACK & EFFECTS
         // ======================
         function showFeedback(message, type = 'info') {
-            // Create toast notification
             const toast = document.createElement('div');
             toast.className = `toast toast-${type} show`;
             toast.innerHTML = `
@@ -1491,10 +1592,9 @@
             `;
             
             const toastContainer = document.getElementById('toast-container');
-            toastContainer.innerHTML = ''; // Clear previous toasts
+            toastContainer.innerHTML = '';
             toastContainer.appendChild(toast);
             
-            // Remove after delay
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => {
@@ -1507,7 +1607,7 @@
         
         function showConfetti() {
             const container = document.getElementById('confetti-container');
-            if (!container) return; // Guard clause
+            if (!container) return;
             
             container.innerHTML = '';
             
@@ -1526,26 +1626,18 @@
                 
                 container.appendChild(confetti);
                 
-                // Animate using Web Animations API for better performance and control
                 const animationDuration = Math.random() * 3 + 2;
                 const delay = Math.random() * 2;
                 
                 const animation = confetti.animate([
-                    { 
-                        transform: 'translateY(-100px) rotate(0deg)',
-                        opacity: 1
-                    },
-                    {
-                        transform: `translateY(${window.innerHeight + 100}px) rotate(${720 + Math.random() * 720}deg)`,
-                        opacity: 0
-                    }
+                    { transform: 'translateY(-100px) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 100}px) rotate(${720 + Math.random() * 720}deg)`, opacity: 0 }
                 ], {
                     duration: animationDuration * 1000,
                     delay: delay * 1000,
                     easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
                 });
                 
-                // Cleanup animation when it finishes
                 animation.onfinish = () => {
                     if (container.contains(confetti)) {
                         container.removeChild(confetti);
@@ -1553,46 +1645,13 @@
                 };
             }
             
-            // Clean up after animation
             setTimeout(() => {
                 container.innerHTML = '';
             }, 5000);
         }
         
         // ======================
-        // SERVICE WORKER
-        // ======================
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(registration => {
-                            console.log('ServiceWorker registered with scope:', registration.scope);
-                        })
-                        .catch(error => {
-                            console.log('ServiceWorker registration failed:', error);
-                        });
-                });
-            }
-        }
-        
-        // ======================
-        // APP CACHE & OFFLINE SUPPORT
-        // ======================
-        function setupAppCache() {
-            // Create dummy service worker file if not exists
-            if (!localStorage.getItem('DecideNowServiceWorker')) {
-                localStorage.setItem('DecideNowServiceWorker', 'true');
-            }
-            
-            // Cache initial data
-            if (!localStorage.getItem('DecideNowDecks')) {
-                initializeDemoData();
-            }
-        }
-        
-        // ======================
-        // DEMO DATA FOR FIRST RUN
+        // DEMO DATA
         // ======================
         function initializeDemoData() {
             const demoDecks = [
@@ -1624,55 +1683,9 @@
             showFeedback('Deck contoh telah dibuat untuk Anda!', 'info');
         }
         
-        // Initialize app cache and demo data
-        setupAppCache();
-        
-        // Handle beforeunload to clean up
-        window.addEventListener('beforeunload', () => {
-            // Nothing specific to clean up for spinner mode
-        });
-        
-        // Handle visibility change to pause/resume timer (not needed for spinner)
-        document.addEventListener('visibilitychange', () => {
-            // Not needed for spinner mode
-        });
-    </script>
-    
-    <!-- Service Worker -->
-    <script>
-        // Create service worker dynamically
-        if ('serviceWorker' in navigator) {
-            const serviceWorkerContent = `
-                const CACHE_NAME = 'decidenow-v1';
-                const urlsToCache = [
-                    '/',
-                    '/index.html',
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
-                ];
-
-                self.addEventListener('install', event => {
-                    event.waitUntil(
-                        caches.open(CACHE_NAME)
-                            .then(cache => cache.addAll(urlsToCache))
-                    );
-                });
-
-                self.addEventListener('fetch', event => {
-                    event.respondWith(
-                        caches.match(event.request)
-                            .then(response => response || fetch(event.request))
-                    );
-                });
-            `;
-            
-            // Create a Blob with the service worker content
-            const blob = new Blob([serviceWorkerContent], {type: 'application/javascript'});
-            const serviceWorkerURL = URL.createObjectURL(blob);
-            
-            // Register the service worker
-            navigator.serviceWorker.register(serviceWorkerURL)
-                .then(registration => console.log('ServiceWorker registered with scope:', registration.scope))
-                .catch(error => console.log('ServiceWorker registration failed:', error));
+        // Initialize demo data if no decks exist
+        if (!localStorage.getItem('DecideNowDecks')) {
+            initializeDemoData();
         }
     </script>
 </body>

@@ -6,7 +6,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
-const port = 8006; // Port yang diminta
+const port = 5000; // Port yang diminta
 
 // Middleware untuk menyajikan file statis.
 // Meskipun di file HTML ini CSS/JS-nya inline, ini adalah praktik terbaik.
